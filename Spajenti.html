@@ -1,75 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Chat</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #chat { width: 300px; margin: auto; border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
-        input, button { margin: 5px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freaky Slider with Cheese</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      position: relative;
+    }
+
+    h1 {
+      color: #4e4e4e;
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .slider {
+      width: 100%;
+      height: 12px;
+      border-radius: 8px;
+      background-color: #ffeb3b;
+      outline: none;
+      transition: background 0.3s ease;
+    }
+
+    .slider::-webkit-slider-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #fbc02d;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .slider::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #fbc02d;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .value {
+      font-size: 18px;
+      margin-top: 10px;
+      color: #ffeb3b;
+    }
+
+    .slider-container {
+      margin-top: 20px;
+    }
+
+    #cheeseImage {
+      margin-top: 20px;
+      max-width: 100%;
+      border-radius: 8px;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Small text at the bottom */
+    .cry-for-help {
+      font-size: 12px;
+      color: #888;
+      margin-top: 20px;
+    }
+
+    /* Particle styling */
+    .particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #ffeb3b;
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: none;
+      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+    }
+  </style>
 </head>
 <body>
 
-    <h2>Simple Chat App</h2>
-    <div id="chat"></div>
-    <input type="text" id="message" placeholder="Type a message">
-    <button id="sendBtn">Send</button>
+  <div class="container">
+    <h1>Freaky</h1>
+    <div class="slider-container">
+      <input type="range" min="0" max="100" value="50" class="slider" id="slider">
+      <div class="value" id="sliderValue">50</div>
+    </div>
+    <img id="cheeseImage" src="file:///C:/Users/User/OneDrive/Pictures/chense.jpg" alt="Cheese Image">
+    <div class="cry-for-help">this is a cry for help</div>
+  </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // 🔥 Replace this with your Firebase config
-	const firebaseConfig = {
+  <script>
+    const slider = document.getElementById('slider');
+    const sliderValue = document.getElementById('sliderValue');
+    const cheeseImage = document.getElementById('cheeseImage');
 
-		apiKey: "AIzaSyCTiLTHqA2cVZhxhflwrOiIAOPj10E97h8",
+    slider.addEventListener('input', function(event) {
+      const opacityValue = slider.value / 100;
+      sliderValue.textContent = slider.value;
+      cheeseImage.style.opacity = opacityValue;
+    });
 
-		authDomain: "fartened-chat.firebaseapp.com",
+    // Particle effect
+    slider.addEventListener('mousemove', function(event) {
+      for (let i = 0; i < 3; i++) {
+        createParticle(event.clientX, event.clientY);
+      }
+    });
 
-		projectId: "fartened-chat",
+    function createParticle(x, y) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      document.body.appendChild(particle);
 
-		storageBucket: "fartened-chat.firebasestorage.app",
+      const size = Math.random() * 10 + 5;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
 
-		messagingSenderId: "554912759447",
+      const offsetX = (Math.random() - 0.5) * 20;
+      const offsetY = (Math.random() - 0.5) * 20;
+      particle.style.left = `${x + offsetX}px`;
+      particle.style.top = `${y + offsetY}px`;
 
-		appId: "1:554912759447:web:442178c8ebcf16886ff3d2",
-
-		measurementId: "G-7BN3XP2YSD"
-
-};
-
-
-
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            const db = firebase.database();
-
-            // Send message function
-            function sendMessage() {
-                const message = document.getElementById("message").value;
-                if (message.trim() !== "") {
-                    db.ref("messages").push({
-                        text: message,
-                        timestamp: Date.now()
-                    });
-                    document.getElementById("message").value = "";
-                }
-            }
-
-            // Receive messages in real-time
-            db.ref("messages").on("child_added", function(snapshot) {
-                const msg = snapshot.val();
-                const chatBox = document.getElementById("chat");
-                chatBox.innerHTML += `<p>${msg.text}</p>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            });
-
-            // Attach event listener AFTER Firebase is initialized
-            document.getElementById("sendBtn").addEventListener("click", sendMessage);
-        });
-    </script>
+      setTimeout(() => {
+        particle.style.transform = 'scale(0)';
+        particle.style.opacity = '0';
+        setTimeout(() => particle.remove(), 500);
+      }, 50);
+    }
+  </script>
 
 </body>
 </html>
